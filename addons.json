@@ -1,0 +1,14 @@
+{
+    "addons": [
+        {
+            "id": "custom-script-runner",
+            "name": "Script Runner Pro",
+            "description": "Custom integration to run arbitrary PowerShell scripts from the web interface.",
+            "version": "0.5.0-beta",
+            "author": "Community Maintainer",
+            "repository": "https://github.com/community/custom-repo",
+            "type": "custom",
+            "download_url": "https://github.com/community/custom-repo/raw/main/custom-script-runner.zip"
+        }
+    ]
+}

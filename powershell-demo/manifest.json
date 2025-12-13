@@ -1,0 +1,12 @@
+{
+    "schema_version": "1.0.0",
+    "domain": "ps_demo",
+    "name": "PowerShell System Info",
+    "version": "0.1.0",
+    "min_core_version": "0.1.0",
+    "logo": "https://upload.wikimedia.org/wikipedia/commons/2/2f/PowerShell_5.0_icon.png",
+    "implementations": {
+        "powershell": "integration.ps1"
+    },
+    "exposed_services": ["get_system_info", "echo_message"]
+}
