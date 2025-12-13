@@ -1,14 +1,33 @@
 {
-    "schema_version": "1.0.0",
+    "schema_version": "2.0.0",
     "domain": "script_runner",
     "name": "Custom Script Runner",
-    "version": "1.0.0",
+    "version": "1.2.0",
+    "description": "Execute arbitrary Python scripts via workflows.",
     "min_core_version": "0.1.0",
     "logo": "https://cdn-icons-png.flaticon.com/512/2721/2721620.png",
     "documentation": "https://github.com/community/custom-repo",
-    "codeowners": ["@community"],
+    "source_url": "https://github.com/community/custom-repo/tree/main/custom-script-runner",
+    "codeowners": [
+        "@community"
+    ],
     "is_system": false,
+    "connection_type": "local",
+    "capabilities": [
+        "system_core"
+    ],
     "implementations": {
         "python": "integration.py"
+    },
+    "config_schema": {
+        "type": "object",
+        "properties": {
+            "allowed_paths": {
+                "type": "array",
+                "items": {
+                    "type": "string"
+                }
+            }
+        }
     }
 }
