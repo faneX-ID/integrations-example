@@ -1,0 +1,206 @@
+name: PR Assistant
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+  checks: write
+  issues: write
+
+env:
+  REQUIRED_MANIFEST_VERSION: "2.0.0"
+  CURRENT_SCHEMA_VERSION: "2.0.0"
+
+jobs:
+  # =================================================================================
+  # JOB 1: PR Validation & Feedback
+  # Validates example integration manifests and structure
+  # =================================================================================
+  pr-validation:
+    if: github.event_name == 'pull_request' && github.event.action != 'closed'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+
+      - name: Install Dependencies
+        run: |
+          pip install jsonschema requests pyyaml
+
+      # --- 1. Validate addons.json ---
+      - name: 📋 Validate addons.json
+        run: |
+          python << 'EOF'
+          import json
+          import sys
+          from pathlib import Path
+
+          addons_json = Path("addons.json")
+          if not addons_json.exists():
+              print("⚠️ addons.json not found (optional for examples)")
+          else:
+              with open(addons_json) as f:
+                  data = json.load(f)
+              if "addons" not in data or not isinstance(data["addons"], list):
+                  print("❌ addons.json must contain 'addons' array")
+                  sys.exit(1)
+              print(f"✅ addons.json valid ({len(data['addons'])} examples)")
+          EOF
+
+      # --- 2. Validate Example Integration Manifests ---
+      - name: 📝 Validate Example Integration Manifests
+        run: |
+          python << 'EOF'
+          import json
+          import sys
+          from pathlib import Path
+
+          errors = []
+          validated = 0
+
+          print("Validating example integration manifests...")
+
+          for manifest_path in Path(".").rglob("*/manifest.json"):
+              if manifest_path.parent == Path("."):
+                  continue
+
+              example_dir = manifest_path.parent
+              example_name = example_dir.name
+
+              try:
+                  with open(manifest_path) as f:
+                      manifest = json.load(f)
+
+                  # Basic validation (less strict for examples)
+                  required_fields = ["schema_version", "domain", "name", "version", "description", "implementations"]
+                  for field in required_fields:
+                      if field not in manifest:
+                          errors.append(f"{example_name}: missing required field '{field}'")
+
+                  # Schema version check
+                  schema_version = manifest.get("schema_version", "0.0.0")
+                  if schema_version != "2.0.0":
+                      errors.append(f"{example_name}: schema_version should be 2.0.0, got {schema_version}")
+
+                  # Check implementations exist
+                  implementations = manifest.get("implementations", {})
+                  for lang, filename in implementations.items():
+                      impl_path = example_dir / filename
+                      if not impl_path.exists():
+                          errors.append(f"{example_name}: implementation file '{filename}' not found")
+
+                  # README is recommended but not required for examples
+                  readme_path = example_dir / "README.md"
+                  if not readme_path.exists():
+                      print(f"⚠️ {example_name}: README.md not found (recommended)")
+
+                  if not any(e.startswith(example_name) for e in errors):
+                      validated += 1
+                      print(f"✅ {example_name} valid")
+
+              except json.JSONDecodeError as e:
+                  errors.append(f"{example_name}: Invalid JSON - {e}")
+              except Exception as e:
+                  errors.append(f"{example_name}: {e}")
+
+          if errors:
+              print("\n❌ Errors found:")
+              for e in errors:
+                  print(f"  - {e}")
+              sys.exit(1)
+          else:
+              print(f"\n✅ All {validated} example(s) valid.")
+          EOF
+
+      # --- 3. Check Code Quality ---
+      - name: 🔍 Check Code Quality
+        run: |
+          python << 'EOF'
+          import ast
+          import sys
+          from pathlib import Path
+
+          errors = []
+          checked = 0
+
+          # Check Python files
+          for py_file in Path(".").rglob("*.py"):
+              if py_file.parent == Path("."):
+                  continue
+              example_name = py_file.parent.name
+              try:
+                  with open(py_file) as f:
+                      code = f.read()
+
+                  try:
+                      ast.parse(code)
+                      checked += 1
+                  except SyntaxError as e:
+                      errors.append(f"{example_name}: Syntax error in {py_file.name} - {e}")
+
+              except Exception as e:
+                  errors.append(f"{example_name}: Error reading {py_file.name} - {e}")
+
+          if errors:
+              print("\n❌ Code quality issues:")
+              for e in errors:
+                  print(f"  - {e}")
+              sys.exit(1)
+          else:
+              print(f"\n✅ All {checked} code file(s) valid.")
+          EOF
+
+      # --- 4. Feedback Comment ---
+      - name: Feedback Comment
+        if: always()
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const outcome = '${{ job.status }}';
+            if (outcome === 'failure') {
+               github.rest.issues.createComment({
+                 issue_number: context.issue.number,
+                 owner: context.repo.owner,
+                 repo: context.repo.repo,
+                 body: "❌ **PR Validation Failed**\n\nPlease check:\n- Example integration manifests are valid\n- All required files exist\n- Code syntax is correct"
+               });
+            } else if (outcome === 'success') {
+               github.rest.issues.createComment({
+                 issue_number: context.issue.number,
+                 owner: context.repo.owner,
+                 repo: context.repo.repo,
+                 body: "✅ **PR Validation Passed**\n\nAll example integration checks passed!"
+               });
+            }
+
+  # =================================================================================
+  # JOB 2: Thank Contributor
+  # =================================================================================
+  thank-you:
+    if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v6
+        with:
+          script: |
+            const author = context.payload.pull_request.user.login;
+            const admins = ['FaserF', 'fabia', 'github-actions[bot]'];
+            if (admins.includes(author)) return;
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `🎉 **Thank you @${author}!**\n\nYour contribution to the **faneX-ID Integration Examples** is valuable! 🚀`
+            });

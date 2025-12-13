@@ -4,7 +4,9 @@
     "name": "PowerShell Utilities",
     "version": "1.0.1",
     "description": "Helper functions for Windows environments.",
-    "min_core_version": "0.1.0",
+    "min_core_version": "2025.12.0",
+    "logo": "https://cdn-icons-png.flaticon.com/512/6132/6132222.png",
+    "documentation": "https://github.com/community/custom-repo",
     "source_url": "https://github.com/community/custom-repo/tree/main/powershell-demo",
     "codeowners": [
         "@community"
@@ -12,9 +14,32 @@
     "is_system": false,
     "connection_type": "internal",
     "capabilities": [
-        "system_core"
+        "system_core",
+        "automation"
     ],
     "implementations": {
         "powershell": "integration.ps1"
+    },
+    "requirements": [],
+    "exposed_services": [
+        {
+            "name": "execute_command",
+            "description": "Execute a PowerShell command",
+            "schema": {
+                "command": {
+                    "type": "string",
+                    "description": "PowerShell command to execute"
+                },
+                "arguments": {
+                    "type": "object",
+                    "nullable": true,
+                    "description": "Command arguments"
+                }
+            }
+        }
+    ],
+    "config_schema": {
+        "type": "object",
+        "properties": {}
     }
 }

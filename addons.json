@@ -3,12 +3,22 @@
         {
             "id": "custom-script-runner",
             "name": "Script Runner Pro",
-            "description": "Custom integration to run arbitrary PowerShell scripts from the web interface.",
-            "version": "0.5.0-beta",
+            "description": "Custom integration to run arbitrary Python scripts from the web interface via workflows.",
+            "version": "1.2.0",
             "author": "Community Maintainer",
-            "repository": "https://github.com/community/custom-repo",
+            "repository": "https://github.com/faneX-ID/integrations-example",
             "type": "custom",
-            "download_url": "https://github.com/community/custom-repo/raw/main/custom-script-runner.zip"
+            "download_url": "https://github.com/faneX-ID/integrations-example/raw/main/custom-script-runner.zip"
+        },
+        {
+            "id": "powershell-demo",
+            "name": "PowerShell Utilities",
+            "description": "Example integration demonstrating PowerShell integration capabilities for Windows environments.",
+            "version": "1.0.1",
+            "author": "Community Maintainer",
+            "repository": "https://github.com/faneX-ID/integrations-example",
+            "type": "custom",
+            "download_url": "https://github.com/faneX-ID/integrations-example/raw/main/powershell-demo.zip"
         }
     ]
 }

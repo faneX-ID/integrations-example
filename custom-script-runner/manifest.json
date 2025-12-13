@@ -4,7 +4,7 @@
     "name": "Custom Script Runner",
     "version": "1.2.0",
     "description": "Execute arbitrary Python scripts via workflows.",
-    "min_core_version": "0.1.0",
+    "min_core_version": "2025.12.0",
     "logo": "https://cdn-icons-png.flaticon.com/512/2721/2721620.png",
     "documentation": "https://github.com/community/custom-repo",
     "source_url": "https://github.com/community/custom-repo/tree/main/custom-script-runner",
@@ -14,11 +14,33 @@
     "is_system": false,
     "connection_type": "local",
     "capabilities": [
-        "system_core"
+        "system_core",
+        "automation"
     ],
     "implementations": {
         "python": "integration.py"
     },
+    "requirements": [],
+    "exposed_services": [
+        {
+            "name": "execute_script",
+            "description": "Execute a Python script",
+            "schema": {
+                "script_path": {
+                    "type": "string",
+                    "description": "Path to the script file"
+                },
+                "arguments": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "nullable": true,
+                    "description": "Script arguments"
+                }
+            }
+        }
+    ],
     "config_schema": {
         "type": "object",
         "properties": {
@@ -26,7 +48,9 @@
                 "type": "array",
                 "items": {
                     "type": "string"
-                }
+                },
+                "title": "Allowed Paths",
+                "description": "List of allowed script paths for security"
             }
         }
     }
