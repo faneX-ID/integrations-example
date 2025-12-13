@@ -1,0 +1,77 @@
+name: New Integration Request
+description: Request a new example integration to be added
+title: "[Integration Request] "
+labels: ["integration", "example", "enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for requesting a new example integration! Please fill out all sections below.
+
+        **Note:** This is for example integrations. After submitting, our bot will analyze your request and may automatically generate integration files.
+
+  - type: input
+    id: integration-name
+    attributes:
+      label: Integration Name
+      description: The name of the integration (e.g., "Custom Script Runner", "PowerShell Demo")
+      placeholder: e.g., Custom Script Runner
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Integration Description
+      description: A clear description of what this example integration demonstrates.
+      placeholder: |
+        Example: Demonstrates how to run custom scripts and commands from workflows.
+    validations:
+      required: true
+
+  - type: textarea
+    id: use-case
+    attributes:
+      label: Use Case
+      description: What does this example demonstrate? What learning purpose does it serve?
+      placeholder: |
+        Example:
+        - Shows how to execute external scripts
+        - Demonstrates PowerShell integration
+        - Example of local system integration
+    validations:
+      required: true
+
+  - type: dropdown
+    id: connection-type
+    attributes:
+      label: Connection Type
+      description: How does this integration connect?
+      options:
+        - local - Runs on local system
+        - internal - Internal network connection
+        - cloud - Internet/cloud service
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional-info
+    attributes:
+      label: Additional Information
+      description: Any additional information about this example integration
+      placeholder: |
+        - What concepts does it demonstrate?
+        - What should users learn from this?
+        - Any special requirements?
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Checklist
+      options:
+        - label: I have searched existing issues to ensure this example hasn't been requested before
+          required: true
+        - label: This example would be helpful for learning purposes
+          required: true
