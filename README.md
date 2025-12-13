@@ -24,3 +24,7 @@ Add this repository to your faneX-ID installation to test these examples.
 
 ## 🛠️ How to Build Your Own
 See the [🧩 Developer Guide](https://github.com/faneX-ID/core/blob/main/INTEGRATION_DEV_GUIDE.md) for full documentation.
+
+## 📝 License
+
+This project is licensed under the GNU Affero General Public License v3.0 (AGPL-3.0) - see the [LICENSE](LICENSE) file for details.
