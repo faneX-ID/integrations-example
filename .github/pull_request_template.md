@@ -35,3 +35,4 @@
 - [ ] I have commented my code to help others learn
 - [ ] I have updated the README.md with proper documentation
 - [ ] The manifest.json follows schema version 2.0.0
+
