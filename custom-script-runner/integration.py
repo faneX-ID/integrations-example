@@ -1,6 +1,8 @@
+import logging
+
 from services.integration_base import Integration
 from services.service_registry import service_registry
-import logging
+
 
 class ScriptRunnerIntegration(Integration):
     async def async_setup(self):
@@ -12,7 +14,7 @@ class ScriptRunnerIntegration(Integration):
             service="run_script",
             service_func=self.run_script,
             schema={"script_name": str},
-            description="Run a stored PowerShell script"
+            description="Run a stored PowerShell script",
         )
         return True
 
