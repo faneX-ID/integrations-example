@@ -1,6 +1,5 @@
 from services.integration_base import Integration
 from services.service_registry import service_registry
-import logging
 
 class ScriptRunnerIntegration(Integration):
     async def async_setup(self):
